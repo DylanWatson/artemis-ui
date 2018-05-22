@@ -2,6 +2,20 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
+
+let responseFromFitbit;
+let responseFromArtermis;
+
+const wordStyle = {
+  fontSize: 80,
+  textAlign: 'center',
+}
+
+const calorieStyle = {
+  fontSize: 256,
+  textAlign: 'center',
+}
+
 class App extends Component {
   constructor(props){
     super(props);
@@ -9,18 +23,16 @@ class App extends Component {
   }
 
   componentDidMount(){
-    return fetch('/api/get/5af0fba75c5ba22ba456a9ad')
+    return fetch('/api/get/5b03817f58504167ccb0eead')
       .then((response) => response.json())
       .then((responseJson) => {
-
+        responseFromArtermis = responseJson
+      })
+      .then(() => {
         this.setState({
           isLoading: false,
-          dataSource: responseJson,
-        }, function(){
-          var oldURL = document.referrer;
-          alert(oldURL);
+          dataSource: responseFromArtermis,
         });
-
       })
       .catch((error) =>{
         console.error(error);
@@ -37,8 +49,11 @@ class App extends Component {
 
     return(
       <div>
-        <div>{this.state.dataSource.name}</div>
-        <div>Calorie Goal for Today: {this.state.dataSource.calorieGoal}</div>
+        <div style={wordStyle}>
+        You still need to burn
+          <div style={calorieStyle}>{this.state.dataSource.calorieGoal - this.state.dataSource.burnedCalories}</div>
+          calories before you can use this site!
+          </div>
       </div>
     );
   }
