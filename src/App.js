@@ -19,7 +19,9 @@ const calorieStyle = {
 class App extends Component {
   constructor(props){
     super(props);
-    this.state ={ isLoading: true}
+    this.state = { isLoading: true, value: 0}
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   componentDidMount(){
@@ -39,6 +41,25 @@ class App extends Component {
       });
   }
 
+  handleChange(event) {
+   this.setState({value: event.target.value});
+ }
+
+ handleSubmit(event) {
+   fetch('/api/addBurntCalories/5b03817f58504167ccb0eead',
+ {
+    method: 'POST',
+    body: JSON.stringify({"burnedCalories": parseInt(this.state.value)}),
+    headers: {
+      'content-type': 'application/json'
+    }
+ })
+ .catch((error) => {
+   console.error(error);
+ });
+    event.preventDefault();
+  }
+
   render(){
 
     if(this.state.isLoading){
@@ -54,6 +75,13 @@ class App extends Component {
           <div style={calorieStyle}>{this.state.dataSource.calorieGoal - this.state.dataSource.burnedCalories}</div>
           calories before you can use this site!
           </div>
+          <form onSubmit={this.handleSubmit}>
+        <label>
+          Input Burned Calories:
+          <input type="text" value={this.state.value} onChange={this.handleChange} />
+        </label>
+        <input type="submit" value="Submit" />
+      </form>
       </div>
     );
   }
